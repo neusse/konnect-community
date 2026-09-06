@@ -26,7 +26,10 @@ if (process.env.DRY_RUN === "true") {
 }
 
 if (!process.env.DISCORD_FEED_WEBHOOK_URL) {
-  throw new Error("DISCORD_FEED_WEBHOOK_URL is required unless DRY_RUN=true");
+  process.stdout.write(
+    "::warning::DISCORD_FEED_WEBHOOK_URL is not configured; skipping Discord digest.\n",
+  );
+  process.exit(0);
 }
 
 await postWebhookMessage({

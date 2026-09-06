@@ -48,7 +48,9 @@ The workflows require:
 
 To bootstrap the dashboard, run `npm run status` once without a message ID. It
 prints the created Discord message ID; save that value as
-`DISCORD_STATUS_MESSAGE_ID`. Subsequent runs edit that message.
+`DISCORD_STATUS_MESSAGE_ID`. Subsequent runs edit that message. Scheduled runs
+exit successfully with a visible warning while their webhook secret is not yet
+configured.
 
 Never commit webhook URLs. Treat them like passwords and rotate them if they are
 exposed.

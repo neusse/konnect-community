@@ -21,7 +21,10 @@ if (process.env.DRY_RUN === "true") {
 }
 
 if (!process.env.DISCORD_STATUS_WEBHOOK_URL) {
-  throw new Error("DISCORD_STATUS_WEBHOOK_URL is required unless DRY_RUN=true");
+  process.stdout.write(
+    "::warning::DISCORD_STATUS_WEBHOOK_URL is not configured; skipping Discord update.\n",
+  );
+  process.exit(0);
 }
 
 const result = await upsertWebhookMessage({
