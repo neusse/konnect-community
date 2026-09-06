@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { classifyPullRequest, summarizePullRequests } from "../src/classify.mjs";
+import {
+  classifyPullRequest,
+  isAiRelated,
+  summarizeAiPullRequests,
+  summarizePullRequests,
+} from "../src/classify.mjs";
 
 function pullRequest(overrides = {}) {
   return {
@@ -51,5 +56,23 @@ test("summary exposes intentionally overlapping workflow counts", () => {
   assert.equal(summary.draft, 1);
   assert.equal(summary.conflicted, 1);
   assert.equal(summary.waitingContributor, 1);
+  assert.equal(summary.readyToMerge, 1);
+});
+
+test("AI classification recognizes client and established guidance labels", () => {
+  assert.equal(
+    isAiRelated({ labels: { nodes: [{ name: "client:codex" }] } }),
+    true,
+  );
+  assert.equal(isAiRelated({ labels: ["area:agent-guidance"] }), true);
+  assert.equal(isAiRelated({ labels: ["area:pcb"] }), false);
+});
+
+test("AI PR summary excludes unrelated pull requests", () => {
+  const summary = summarizeAiPullRequests([
+    pullRequest({ labels: { nodes: [{ name: "client:claude" }] } }),
+    pullRequest({ number: 2, labels: { nodes: [{ name: "area:pcb" }] } }),
+  ]);
+  assert.equal(summary.open, 1);
   assert.equal(summary.readyToMerge, 1);
 });

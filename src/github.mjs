@@ -1,3 +1,5 @@
+import { isAiRelated } from "./classify.mjs";
+
 const GITHUB_API = "https://api.github.com";
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 
@@ -48,6 +50,9 @@ async function pullRequests(owner, repo, token) {
             mergeable
             reviewDecision
             updatedAt
+            labels(first: 20) {
+              nodes { name }
+            }
             commits(last: 1) {
               nodes {
                 commit {
@@ -90,6 +95,16 @@ export async function collectSnapshot({ owner, repo, token, now = new Date() }) 
     maintainerDecisionIssues:
       'is:issue is:open label:"needs:maintainer-decision"',
     activeIssues: `is:issue is:open updated:>=${activeSince}`,
+    claudeIssuesOpen: 'is:issue is:open label:"client:claude"',
+    claudeIssuesClosed: 'is:issue is:closed label:"client:claude"',
+    codexIssuesOpen: 'is:issue is:open label:"client:codex"',
+    codexIssuesClosed: 'is:issue is:closed label:"client:codex"',
+    otherClientIssuesOpen: 'is:issue is:open label:"client:other"',
+    otherClientIssuesClosed: 'is:issue is:closed label:"client:other"',
+    agentGuidanceIssuesOpen: 'is:issue is:open label:"area:agent-guidance"',
+    agentGuidanceIssuesClosed: 'is:issue is:closed label:"area:agent-guidance"',
+    aiMaintainerDecisionIssues:
+      'is:issue is:open label:"area:agent-guidance" label:"needs:maintainer-decision"',
     mergedPullRequests: "is:pr is:merged",
     closedUnmergedPullRequests: "is:pr is:closed is:unmerged",
   };
@@ -134,26 +149,38 @@ export async function collectDailyActivity({ owner, repo, token, now = new Date(
 
   const results = await Promise.all(
     Object.entries(queries).map(async ([key, qualifier]) => {
-      const result = await search(owner, repo, qualifier, token, 3);
+      const result = await search(owner, repo, qualifier, token, 100);
+      const entries = result.items.map((item) => ({
+        labels: item.labels?.map((label) => label.name) ?? [],
+        number: item.number,
+        title: item.title,
+        url: item.html_url,
+      }));
+      const aiEntries = entries.filter(isAiRelated);
       return [
         key,
         {
           count: result.total_count,
-          items: result.items.map((item) => ({
-            number: item.number,
-            title: item.title,
-            url: item.html_url,
-          })),
+          items: entries.slice(0, 3),
+          ai: {
+            count: aiEntries.length,
+            items: aiEntries.slice(0, 3),
+          },
         },
       ];
     }),
   );
+
+  const activity = Object.fromEntries(results);
 
   return {
     generatedAt: new Date(now).toISOString(),
     owner,
     repo,
     since,
-    activity: Object.fromEntries(results),
+    activity,
+    aiActivity: Object.fromEntries(
+      Object.entries(activity).map(([key, value]) => [key, value.ai]),
+    ),
   };
 }

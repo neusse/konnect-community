@@ -12,6 +12,15 @@ const snapshot = {
     claimedIssues: 10,
     maintainerDecisionIssues: 1,
     activeIssues: 46,
+    claudeIssuesOpen: 2,
+    claudeIssuesClosed: 3,
+    codexIssuesOpen: 4,
+    codexIssuesClosed: 5,
+    otherClientIssuesOpen: 1,
+    otherClientIssuesClosed: 2,
+    agentGuidanceIssuesOpen: 6,
+    agentGuidanceIssuesClosed: 7,
+    aiMaintainerDecisionIssues: 1,
     mergedPullRequests: 204,
     closedUnmergedPullRequests: 35,
   },
@@ -28,6 +37,11 @@ test("status payload prevents mentions and contains project counts", () => {
   assert.deepEqual(payload.allowed_mentions, { parse: [] });
   assert.match(payload.embeds[0].fields[0].value, /46/);
   assert.match(payload.embeds[0].fields[0].value, /131/);
+  const aiIssues = payload.embeds[0].fields.find(
+    (field) => field.name === "AI/client issues",
+  );
+  assert.match(aiIssues.value, /Claude \*\*2\*\* open/);
+  assert.match(aiIssues.value, /guidance \*\*6\*\* \/ \*\*7\*\*/);
   for (const field of payload.embeds[0].fields) {
     assert.ok(field.value.length <= 1024);
   }
@@ -44,4 +58,35 @@ test("daily digest is omitted when nothing happened", () => {
     },
   });
   assert.equal(payload, null);
+});
+
+test("daily digest highlights AI-labeled activity", () => {
+  const item = {
+    count: 1,
+    items: [
+      {
+        number: 42,
+        title: "Codex guidance fix",
+        url: "https://github.com/mixelpixx/Konnect/issues/42",
+      },
+    ],
+  };
+  const none = { count: 0, items: [] };
+  const payload = renderDailyDigest({
+    generatedAt: snapshot.generatedAt,
+    activity: {
+      openedIssues: item,
+      closedIssues: none,
+      openedPullRequests: none,
+      mergedPullRequests: none,
+    },
+    aiActivity: {
+      openedIssues: item,
+      closedIssues: none,
+      openedPullRequests: none,
+      mergedPullRequests: none,
+    },
+  });
+  assert.equal(payload.embeds[0].fields[0].name, "AI/client activity");
+  assert.match(payload.embeds[0].fields[0].value, /Codex guidance fix/);
 });
