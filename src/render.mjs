@@ -1,4 +1,7 @@
-import { summarizePullRequests } from "./classify.mjs";
+import {
+  summarizeAiPullRequests,
+  summarizePullRequests,
+} from "./classify.mjs";
 
 export const KONNECT_URL = "https://github.com/mixelpixx/Konnect";
 export const ICON_URL =
@@ -19,6 +22,7 @@ function links(items, predicate, limit = 4) {
 
 export function renderStatus(snapshot) {
   const prs = summarizePullRequests(snapshot.pullRequests);
+  const aiPrs = summarizeAiPullRequests(snapshot.pullRequests);
   const counts = snapshot.counts;
   const release = snapshot.latestRelease
     ? `[${snapshot.latestRelease.tag}](${snapshot.latestRelease.url})`
@@ -58,6 +62,16 @@ export function renderStatus(snapshot) {
             inline: false,
           },
           {
+            name: "AI/client issues",
+            value: `Claude **${counts.claudeIssuesOpen}** open / **${counts.claudeIssuesClosed}** closed · Codex **${counts.codexIssuesOpen}** / **${counts.codexIssuesClosed}**\nOther MCP **${counts.otherClientIssuesOpen}** / **${counts.otherClientIssuesClosed}** · guidance **${counts.agentGuidanceIssuesOpen}** / **${counts.agentGuidanceIssuesClosed}**\n**${counts.aiMaintainerDecisionIssues}** guidance issues need a maintainer decision`,
+            inline: false,
+          },
+          {
+            name: "AI-related PR workflow",
+            value: `**${aiPrs.open}** open · **${aiPrs.waitingContributor}** waiting contributor\n**${aiPrs.waitingReview}** waiting review · **${aiPrs.waitingMaintainer}** ready / waiting maintainer`,
+            inline: false,
+          },
+          {
             name: "Ready to merge",
             value: links(prs.items, (item) => item.readyToMerge),
             inline: false,
@@ -93,6 +107,20 @@ export function renderDailyDigest(snapshot) {
   const total = Object.values(activity).reduce((sum, item) => sum + item.count, 0);
   if (total === 0) return null;
 
+  const aiTotal = Object.values(snapshot.aiActivity ?? {}).reduce(
+    (sum, item) => sum + item.count,
+    0,
+  );
+  const ai = snapshot.aiActivity;
+  const aiItems = aiTotal
+    ? Object.values(ai)
+        .flatMap((item) => item.items)
+        .filter(
+          (item, index, items) =>
+            items.findIndex((candidate) => candidate.url === item.url) === index,
+        )
+    : [];
+
   return {
     username: "Konnect GitHub Digest",
     avatar_url: ICON_URL,
@@ -108,6 +136,15 @@ export function renderDailyDigest(snapshot) {
           activityLine("PRs opened", activity.openedPullRequests),
           activityLine("PRs merged", activity.mergedPullRequests),
         ].join("\n\n"),
+        fields: aiTotal
+          ? [
+              {
+                name: "AI/client activity",
+                value: `Issues **${ai.openedIssues.count}** opened / **${ai.closedIssues.count}** closed · PRs **${ai.openedPullRequests.count}** opened / **${ai.mergedPullRequests.count}** merged\n${links(aiItems, () => true)}`,
+                inline: false,
+              },
+            ]
+          : [],
         footer: { text: "Daily read-only digest from GitHub" },
         timestamp: snapshot.generatedAt,
       },

@@ -9,7 +9,7 @@ low-noise views:
 
 - a single editable project-status dashboard, refreshed every 15 minutes;
 - a once-daily digest of opened and closed issues and opened and merged pull
-  requests.
+  requests, with AI/client activity called out separately.
 
 It deliberately does **not** run a persistent Discord bot, read Discord member
 messages, or write to GitHub.
@@ -21,8 +21,15 @@ messages, or write to GitHub.
 
 The status card reports issue totals, P0 and claimed work, maintainer decisions,
 pull-request totals, drafts, conflicts, CI failures, review state, contributor
-action, and merge-ready work. Categories intentionally overlap: a draft can also
-be conflicted, for example.
+action, merge-ready work, AI client issue totals, agent-guidance totals, and the
+workflow state of AI-related pull requests. Categories intentionally overlap: a
+draft can also be conflicted, for example.
+
+AI/client tracking uses `client:claude`, `client:codex`, and `client:other` plus
+Konnect's existing `area:agent-guidance` label. The client labels identify the
+affected integration; the area label identifies changes to bundled skills,
+agents, hooks, and workflow guidance. The daily digest highlights activity with
+any of those labels without creating a comment-by-comment firehose.
 
 ## Status rules
 

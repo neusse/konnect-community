@@ -1,6 +1,22 @@
 const FAILED_CHECK_STATES = new Set(["ERROR", "FAILURE"]);
 const PENDING_CHECK_STATES = new Set(["EXPECTED", "PENDING"]);
 
+export const AI_LABELS = new Set([
+  "area:agent-guidance",
+  "client:claude",
+  "client:codex",
+  "client:other",
+]);
+
+export function labelNames(item) {
+  const labels = item.labels?.nodes ?? item.labels ?? [];
+  return labels.map((label) => label.name ?? label);
+}
+
+export function isAiRelated(item) {
+  return labelNames(item).some((label) => AI_LABELS.has(label));
+}
+
 export function latestCheckState(pullRequest) {
   return (
     pullRequest.commits?.nodes?.at(-1)?.commit?.statusCheckRollup?.state ?? null
@@ -59,4 +75,8 @@ export function summarizePullRequests(pullRequests) {
     waitingReview: count("waitingReview"),
     items: classified,
   };
+}
+
+export function summarizeAiPullRequests(pullRequests) {
+  return summarizePullRequests(pullRequests.filter(isAiRelated));
 }
