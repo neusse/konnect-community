@@ -1,0 +1,36 @@
+import { postWebhookMessage } from "./discord.mjs";
+import { collectDailyActivity } from "./github.mjs";
+import { renderDailyDigest } from "./render.mjs";
+
+function sourceRepository(value = "mixelpixx/Konnect") {
+  const [owner, repo, extra] = value.split("/");
+  if (!owner || !repo || extra) throw new Error("SOURCE_REPO must be owner/repo");
+  return { owner, repo };
+}
+
+const source = sourceRepository(process.env.SOURCE_REPO);
+const snapshot = await collectDailyActivity({
+  ...source,
+  token: process.env.GITHUB_TOKEN,
+});
+const payload = renderDailyDigest(snapshot);
+
+if (!payload) {
+  process.stdout.write("No GitHub activity to report.\n");
+  process.exit(0);
+}
+
+if (process.env.DRY_RUN === "true") {
+  process.stdout.write(`${JSON.stringify(payload, null, 2)}\n`);
+  process.exit(0);
+}
+
+if (!process.env.DISCORD_FEED_WEBHOOK_URL) {
+  throw new Error("DISCORD_FEED_WEBHOOK_URL is required unless DRY_RUN=true");
+}
+
+await postWebhookMessage({
+  webhookUrl: process.env.DISCORD_FEED_WEBHOOK_URL,
+  payload,
+});
+process.stdout.write("Posted daily GitHub activity digest.\n");

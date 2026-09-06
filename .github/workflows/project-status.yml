@@ -1,0 +1,32 @@
+name: Update Discord project status
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: discord-project-status
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm test
+      - name: Update dashboard
+        env:
+          DISCORD_STATUS_MESSAGE_ID: ${{ vars.DISCORD_STATUS_MESSAGE_ID }}
+          DISCORD_STATUS_WEBHOOK_URL: ${{ secrets.DISCORD_STATUS_WEBHOOK_URL }}
+          GITHUB_TOKEN: ${{ github.token }}
+          SOURCE_REPO: mixelpixx/Konnect
+        run: npm run status

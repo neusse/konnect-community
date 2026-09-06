@@ -1,0 +1,16 @@
+{
+  "name": "konnect-community-status",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Read-only GitHub status dashboards for the Konnect Discord community",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "status": "node src/status.mjs",
+    "digest": "node src/digest.mjs",
+    "test": "node --test"
+  },
+  "license": "AGPL-3.0-only"
+}
