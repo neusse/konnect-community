@@ -10,6 +10,7 @@
   "scripts": {
     "status": "node src/status.mjs",
     "digest": "node src/digest.mjs",
+    "announce": "node src/release-announcement.mjs",
     "test": "node --test"
   },
   "license": "AGPL-3.0-only"

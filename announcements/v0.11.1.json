@@ -1,0 +1,47 @@
+{
+  "id": "v0.11.1",
+  "announcements": [
+    {
+      "project": "Konnect",
+      "version": "v0.11.1",
+      "emoji": "🚀",
+      "releaseUrl": "https://github.com/mixelpixx/Konnect/releases/tag/v0.11.1",
+      "highlights": [
+        "Native local Freerouting: revision-bound DSN export, Freerouting MCP routing, dry-run SES validation, and atomic KiCad apply.",
+        "Claude Desktop now receives the full 221-tool catalogue at initialization.",
+        "Windows kicad-cli installation discovery enables ERC, DRC, and exports without a hand-entered executable path.",
+        "Lost live KiCad connections no longer silently fall back to stale files.",
+        "Stronger skills, agents, hooks, pin-map checks, manufacturing evidence, footprint refresh, ownership, and hierarchy handling."
+      ],
+      "compatibility": {
+        "testedPlatforms": "KiCad 10; release packages for Windows, Linux, and macOS.",
+        "guidanceStatus": "Claude receives the bundled guidance; Codex users should pair this release with konnect-codex v0.11.1.",
+        "mcpClientStatus": "Claude Desktop gets eager tools. Dynamic MCP clients keep the smaller starter catalogue and can load toolsets on demand.",
+        "workflowStatus": "Tools connect and the native routing pipeline is implemented; the initial SES importer supports straight tracks and through vias while preserving locked straight routing.",
+        "restartSteps": "Restart the MCP client after upgrading so it discovers the new server and tool catalogue.",
+        "knownLimitations": "The initial native Freerouting import profile does not yet cover every Specctra geometry form."
+      }
+    },
+    {
+      "project": "konnect-codex",
+      "version": "v0.11.1",
+      "emoji": "🧭",
+      "releaseUrl": "https://github.com/neusse/konnect-codex/releases/tag/v0.11.1",
+      "highlights": [
+        "Removed the duplicate Python/JAR router; Codex now drives Konnect's native check, DSN export, Freerouting MCP route, SES plan, and SES apply pipeline.",
+        "Added a discoverable kicad-workflows router for intake, libraries, schematics, PCB work, recovery, review, manufacturing, and bring-up.",
+        "Added task-owned process cleanup without broad KiCad, Java, or helper-process termination.",
+        "Added PCB-layout physics acceptance for return planes, critical loops, power and thermal paths, RF, edge clearance, via process, and production test access.",
+        "Added the v0.11.1 unsafe-file-fallback recovery boundary and stronger revision, inventory, DRC, and evidence gates."
+      ],
+      "compatibility": {
+        "testedPlatforms": "CI passed on Windows, Linux, and macOS; exact-version matched to Konnect v0.11.1.",
+        "guidanceStatus": "9 reviewed Codex skills, 5 specialist agents, structured hooks, and 26 active enhancements.",
+        "mcpClientStatus": "Codex companion for Konnect v0.11.1; the native Konnect MCP catalogue remains the tool source.",
+        "workflowStatus": "Tools connect; local sync and doctor passed all 45 managed files. Full guided PCB success still depends on project-specific ERC, DRC, routing, and manufacturing evidence.",
+        "restartSteps": "Run konnect-codex sync and konnect-codex doctor, then start a new Codex task.",
+        "knownLimitations": "Use the companion release that exactly matches the installed Konnect release."
+      }
+    }
+  ]
+}
