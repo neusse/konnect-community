@@ -1,0 +1,59 @@
+name: Publish Discord release announcements
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: "Checked-in announcement manifest"
+        required: true
+        default: "announcements/v0.11.1.json"
+        type: string
+      publish_bundle:
+        description: "Type the bundle id to publish (for example v0.11.1)"
+        required: false
+        type: string
+
+concurrency:
+  group: discord-release-${{ inputs.publish_bundle || github.run_id }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Render reviewed announcement payloads
+        env:
+          DRY_RUN: "true"
+          RELEASE_ANNOUNCEMENT: ${{ inputs.manifest }}
+        run: npm run announce
+
+  publish:
+    if: inputs.publish_bundle != ''
+    needs: preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: discord-announcements
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Publish reviewed announcements
+        env:
+          DISCORD_ANNOUNCEMENTS_WEBHOOK_URL: ${{ secrets.DISCORD_ANNOUNCEMENTS_WEBHOOK_URL }}
+          PUBLISH_RELEASE_BUNDLE: ${{ inputs.publish_bundle }}
+          RELEASE_ANNOUNCEMENT: ${{ inputs.manifest }}
+        run: npm run announce

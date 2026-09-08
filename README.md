@@ -9,7 +9,9 @@ low-noise views:
 
 - a single editable project-status dashboard, refreshed every 15 minutes;
 - a once-daily digest of opened and closed issues and opened and merged pull
-  requests, with AI/client activity called out separately.
+  requests, with AI/client activity called out separately;
+- reviewed, manually dispatched release announcements generated from checked-in
+  manifests.
 
 It deliberately does **not** run a persistent Discord bot, read Discord member
 messages, or write to GitHub.
@@ -52,6 +54,23 @@ The workflows require:
 | Actions secret | `DISCORD_STATUS_WEBHOOK_URL` | Webhook for `#project-status` |
 | Actions variable | `DISCORD_STATUS_MESSAGE_ID` | Message edited on each refresh |
 | Actions secret | `DISCORD_FEED_WEBHOOK_URL` | Webhook for `#github-feed` |
+| Actions secret | `DISCORD_ANNOUNCEMENTS_WEBHOOK_URL` | Webhook for `#announcements` |
+
+## Release announcements
+
+Release posts are reviewable data, not prose assembled inside a workflow. Copy
+the previous file in `announcements/`, update both release entries and their
+compatibility evidence, and commit it for review. The renderer enforces the
+Discord length limit, disables mentions, and requires separate MCP connection
+and guided-workflow status.
+
+Run **Publish Discord release announcements** manually. Leave
+`publish_bundle` empty for a preview-only run. After reviewing the rendered log,
+run it again with `publish_bundle` set exactly to the manifest `id` (for example
+`v0.11.1`). The publish job uses the protected `discord-announcements`
+environment and the announcements webhook. This deliberate two-run flow keeps
+release communication repeatable without letting an unreviewed release event
+post directly to the community.
 
 To bootstrap the dashboard, run `npm run status` once without a message ID. It
 prints the created Discord message ID; save that value as
@@ -72,6 +91,8 @@ $env:DRY_RUN = "true"
 $env:SOURCE_REPO = "mixelpixx/Konnect"
 npm run status
 npm run digest
+$env:RELEASE_ANNOUNCEMENT = "announcements/v0.11.1.json"
+npm run announce
 ```
 
 `GITHUB_TOKEN` is optional for light local use and supplied automatically by
