@@ -67,7 +67,7 @@ and guided-workflow status.
 Run **Publish Discord release announcements** manually. Leave
 `publish_bundle` empty for a preview-only run. After reviewing the rendered log,
 run it again with `publish_bundle` set exactly to the manifest `id` (for example
-`v0.11.1`). The publish job uses the protected `discord-announcements`
+`v0.12.1`). The publish job uses the protected `discord-announcements`
 environment and the announcements webhook. This deliberate two-run flow keeps
 release communication repeatable without letting an unreviewed release event
 post directly to the community.
@@ -91,7 +91,7 @@ $env:DRY_RUN = "true"
 $env:SOURCE_REPO = "mixelpixx/Konnect"
 npm run status
 npm run digest
-$env:RELEASE_ANNOUNCEMENT = "announcements/v0.11.1.json"
+$env:RELEASE_ANNOUNCEMENT = "announcements/v0.12.1.json"
 npm run announce
 ```
 
