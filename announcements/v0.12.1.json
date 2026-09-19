@@ -1,0 +1,47 @@
+{
+  "id": "v0.12.1",
+  "announcements": [
+    {
+      "project": "Konnect",
+      "version": "v0.12.1",
+      "emoji": "🚀",
+      "releaseUrl": "https://github.com/mixelpixx/Konnect/releases/tag/v0.12.1",
+      "highlights": [
+        "Schematic connectivity and no-connect intent now survive moves, rotations, batch placement, region moves, and component replacement.",
+        "Placement automation now reads live board state when available and blocks unsafe, off-board, non-improving, or unbounded plans.",
+        "KiCad 10 project, hierarchy, template-instance, and legacy-net output is now canonical and fails closed when unsupported.",
+        "Native KiCad 10.0.6+ footprint flipping includes observed readback and the application's 3D-model transform.",
+        "Published PCM packages were independently downloaded, hash-verified, package-validated, and stamped into repository metadata."
+      ],
+      "compatibility": {
+        "testedPlatforms": "Release CI and packages passed on Windows, Linux, and macOS; real-KiCad E2E and eight live IPC tests passed before publication.",
+        "guidanceStatus": "Claude receives the bundled guidance; Codex users should pair this release with konnect-codex v0.12.1.",
+        "mcpClientStatus": "Konnect remains the native MCP tool source. Restart the client after upgrading so it starts the v0.12.1 server and refreshed catalogue.",
+        "workflowStatus": "Connectivity, placement, native flip, packaging, and the preserved end-to-end benchmark passed. Force-directed placement remains diagnostic and deprecated.",
+        "restartSteps": "Install Konnect v0.12.1, stop old Konnect sessions, and restart the MCP client.",
+        "knownLimitations": "Saved-file placement scores do not prove unsaved editor state; authored-courtyard spacing is not copper DRC; the native Specctra profile still does not cover every legal KiCad geometry form."
+      }
+    },
+    {
+      "project": "konnect-codex",
+      "version": "v0.12.1",
+      "emoji": "🧭",
+      "releaseUrl": "https://github.com/neusse/konnect-codex/releases/tag/v0.12.1",
+      "highlights": [
+        "Rebased the exact 17-file upstream guidance baseline and pinned the v0.12.1 source and fingerprints.",
+        "Reclassified footprint flipping as native live-IPC preferred with a guarded closed-board fallback.",
+        "Updated Codex placement guidance to reject the deprecated force-directed cleanup path and require exact decoupling references.",
+        "Added atomic batch-placement junction evidence and retired the v0.12.0 missing-reference warning.",
+        "Retained the measured KiCad-native Freerouting compatibility bridge and the companion's broader workflow, evidence, and cleanup gates."
+      ],
+      "compatibility": {
+        "testedPlatforms": "CI passed on Windows, Linux, and macOS; exact-version matched to Konnect v0.12.1.",
+        "guidanceStatus": "9 reviewed Codex skills, 5 specialist agents, structured hooks, and 28 active enhancements are installed and healthy.",
+        "mcpClientStatus": "Codex companion for Konnect v0.12.1; the native Konnect MCP catalogue remains the tool source.",
+        "workflowStatus": "Source audit, 26 tests, Clippy, dry-run publication, local sync, doctor, and all 45 managed files passed.",
+        "restartSteps": "Install the matching release, run konnect-codex sync and konnect-codex doctor, then start a new Codex task.",
+        "knownLimitations": "Use the companion release that exactly matches the installed Konnect release. Project-specific ERC, DRC, routing, and manufacturing evidence remain required."
+      }
+    }
+  ]
+}

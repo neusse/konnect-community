@@ -5,7 +5,7 @@ import { postWebhookMessage } from "./discord.mjs";
 import { renderReleaseBundle, validateReleaseBundle } from "./release-render.mjs";
 
 const manifestPath = path.resolve(
-  process.env.RELEASE_ANNOUNCEMENT ?? "announcements/v0.11.1.json",
+  process.env.RELEASE_ANNOUNCEMENT ?? "announcements/v0.12.1.json",
 );
 const bundle = JSON.parse(await readFile(manifestPath, "utf8"));
 validateReleaseBundle(bundle);

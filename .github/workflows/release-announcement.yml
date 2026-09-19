@@ -6,10 +6,10 @@ on:
       manifest:
         description: "Checked-in announcement manifest"
         required: true
-        default: "announcements/v0.11.1.json"
+        default: "announcements/v0.12.1.json"
         type: string
       publish_bundle:
-        description: "Type the bundle id to publish (for example v0.11.1)"
+        description: "Type the bundle id to publish (for example v0.12.1)"
         required: false
         type: string
 
